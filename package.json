@@ -1,6 +1,6 @@
 {
   "name": "abcy-cycling-ux",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@1.22.22",
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
