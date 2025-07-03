@@ -1,0 +1,328 @@
+:root {
+  /* Core palette extracted from layout.png */
+  --bg-900: #061825; /* primary background */
+  --bg-800: #0b2033; /* raised surface */
+  --bg-700: #152440; /* card darker */
+  --white: #ffffff;
+  --text-body: #c5d0e0;
+
+  /* Gradients */
+  --gradient-blue: linear-gradient(135deg, #143a78 0%, #0c2240 100%);
+  --gradient-pink: linear-gradient(135deg, #88298b 0%, #211944 100%);
+  --gradient-orange: linear-gradient(135deg, #ff8b4d 0%, #ff3560 50%, #3c1957 100%);
+
+  --radius-lg: 14px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 18px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-900);
+  color: var(--white);
+  line-height: 1.7;
+}
+
+/* ------------ Utilities ------------ */
+.card {
+  background: var(--bg-800);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* Reinstate gradient backgrounds with higher priority */
+.gradient-blue { background: var(--gradient-blue) !important; }
+.gradient-pink { background: var(--gradient-pink) !important; }
+.gradient-orange { background: var(--gradient-orange) !important; }
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 0;
+}
+
+/* ------------ Navigation ------------ */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--bg-800);
+  border-radius: 0;
+  margin: 0 0 1.5rem 0;
+}
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.logo-img {
+  height: 10vh;
+  max-height: 180px;
+  width: auto;
+}
+.brand {
+  /* Brand text removed */
+}
+.user-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.username {
+  font-size: 1.8rem;
+  color: var(--text-body);
+}
+.avatar {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  background: url('https://i.pravatar.cc/72') center/cover no-repeat;
+}
+
+/* ------------ Dashboard Grid ------------ */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  min-height: calc(100vh - 10vh - 2rem);
+}
+
+/* Left column sections */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+  gap: 1rem;
+}
+.metric-card,
+.chart-card,
+.ride-card,
+.analytics-card {
+  background: var(--bg-800);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+}
+.metric-value {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.metric-value .unit {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.metric-label {
+  font-size: 1.2rem;
+  color: var(--text-body);
+}
+
+.small-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.chart-card {
+  background: var(--gradient-blue);
+  height: 25vh;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 1rem 1rem 1rem;
+}
+.chart-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Rides */
+.rides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.ride-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ride-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.ride-stats {
+  font-size: 0.85rem;
+  color: var(--text-body);
+}
+.chart-placeholder {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+.ride-desc {
+  font-size: 0.8rem;
+  color: var(--text-body);
+}
+.ride-date {
+  font-size: 0.75rem;
+  color: var(--text-body);
+  opacity: 0.8;
+}
+
+/* Analytics column */
+.analytics-grid {
+  display: grid;
+  gap: 1rem;
+}
+.analytics-card {
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+}
+.analytics-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.analytics-sub {
+  font-size: 0.8rem;
+  color: var(--text-body);
+}
+
+/* Ensure min-height so left column fills more */
+.main-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-column > * {
+  flex-shrink: 0;
+}
+
+.analytics-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .analytics-column {
+    order: -1;
+  }
+}
+
+.metric-loading,
+.metric-error {
+  font-size: 1.5rem;
+  text-align: center;
+}
+.metric-error {
+  color: #ff6b6b;
+}
+
+.metric-card.blue { background: var(--gradient-blue) !important; --bar-fill: rgba(255,255,255,0.35); }
+.metric-card.green { background: linear-gradient(135deg,#0f9d58,#1bb76e) !important; --bar-fill: rgba(255,255,255,0.35); }
+.metric-card.red { background: linear-gradient(135deg,#d32f2f,#b71c1c) !important; --bar-fill: rgba(255,255,255,0.35); }
+
+.sparkline {
+  width: 100%;
+  height: 60px;
+  margin-top: 1rem;
+}
+
+.sparkline.bar {
+  height: 100px;
+  margin-top: 1.5rem;
+}
+
+.sparkline.line {
+  height: 100px;
+  margin-top: 1.5rem;
+}
+
+.metric-heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.metric-subheading {
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.mini-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.05);
+}
+.mini-card + .mini-card { border-top: 1px solid rgba(255,255,255,0.1); }
+
+.condition-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.condition-row {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.row-red { background: linear-gradient(135deg,#d32f2f,#b71c1c); }
+.row-green { background: linear-gradient(135deg,#0f9d58,#1bb76e); }
+.row-red, .row-green { color: #fff; }
+
+.row-blue { background: var(--gradient-blue); color:#fff; }
+
+.sparkline.small { height: 60px; margin-top: 0.5rem; }
+
+/* Horizontal metric rows (text left, chart right) */
+.condition-row.horiz {
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  min-height: 120px;
+  flex: 0 0 auto;
+}
+.condition-row.horiz .metric-subheading {
+  margin: 0;
+}
+.condition-row.horiz .metric-value {
+  margin: 0;
+}
+.condition-row.horiz .sparkline,
+.condition-row.horiz .sparkline.bar {
+  flex: 1;
+  height: 100px;
+  margin-top: 0;
+}
+
+.metric-card.distance-summary {
+  min-height: 420px;
+} 
