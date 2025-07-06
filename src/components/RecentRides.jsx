@@ -180,7 +180,8 @@ const RecentRides = ({ count = 10 }) => {
         const movingTimeStr = moveSec
           ? new Date(moveSec * 1000).toISOString().substring(11, 19)
           : null;
-        const avgSpeedKph = rideData.average_speed ? rideData.average_speed * 3.6 : (moveSec ? distanceKm / (moveSec / 3600) : null);
+        const avgSpeedKph = rideData.average_speed ??
+          (moveSec ? distanceKm / (moveSec / 3600) : null);
         const maxSpeedKph = rideData.max_speed ? (rideData.max_speed * 3.6) : null;
         const tss = rideData.training_stress_score ?? rideData.tss;
         const ifVal = rideData.intensity_factor ?? rideData.intensity;
@@ -212,7 +213,7 @@ const RecentRides = ({ count = 10 }) => {
             <div className="ride-info">
               <div className="ride-title">{name}</div>
               <div className="ride-stats">
-                {distanceKm.toFixed(1)} km · {elevFt.toFixed(0)} ft {avgSpeedKph ? `· ${avgSpeedKph.toFixed(1)} km/h` : ''}
+                {distanceKm.toFixed(1)} km · {elevFt.toFixed(0)} ft
               </div>
               <div className="ride-metrics">
                 {movingTimeStr && (
@@ -262,6 +263,7 @@ const RecentRides = ({ count = 10 }) => {
               {desc && <p className="ride-desc">{desc}</p>}
               {dateStr && <div className="ride-date">{dateStr}</div>}
             </div>
+            <div className="ride-elevation">{elevFt.toFixed(0)} ft</div>
             {coords && <MapThumbnail coords={coords} />}
           </div>
         );
