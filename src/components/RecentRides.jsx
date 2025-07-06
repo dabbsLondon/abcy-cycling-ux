@@ -4,7 +4,6 @@ import MapThumbnail from './MapThumbnail';
 
 // Helper conversions
 const metersToKm = (m) => m / 1000;
-const metersToFeet = (m) => m * 3.28084;
 
 // Ride summaries include a `trend` object describing how each metric
 // compares to the rider's recent history. Values are strings such as
@@ -175,7 +174,7 @@ const RecentRides = ({ count = 10 }) => {
 
         const name = rideData.name ?? 'Ride';
         const distanceKm = metersToKm(rideData.distance ?? rideData.total_distance ?? 0);
-        const elevFt = metersToFeet(rideData.total_elevation_gain ?? rideData.elevation_gain ?? 0);
+        const elevM = rideData.total_elevation_gain ?? rideData.elevation_gain ?? 0;
         const moveSec = rideData.duration ?? rideData.moving_time ?? rideData.movingTime ?? rideData.elapsed_time ?? 0;
         const movingTimeStr = moveSec
           ? new Date(moveSec * 1000).toISOString().substring(11, 19)
@@ -213,7 +212,7 @@ const RecentRides = ({ count = 10 }) => {
             <div className="ride-info">
               <div className="ride-title">{name}</div>
               <div className="ride-stats">
-                {distanceKm.toFixed(1)} km · {elevFt.toFixed(0)} ft
+                {distanceKm.toFixed(1)} km · {elevM.toFixed(0)} m
               </div>
               <div className="ride-metrics">
                 {movingTimeStr && (
@@ -263,7 +262,7 @@ const RecentRides = ({ count = 10 }) => {
               {desc && <p className="ride-desc">{desc}</p>}
               {dateStr && <div className="ride-date">{dateStr}</div>}
             </div>
-            <div className="ride-elevation">{elevFt.toFixed(0)} ft</div>
+            <div className="ride-elevation">{elevM.toFixed(0)} m</div>
             {coords && <MapThumbnail coords={coords} />}
           </div>
         );
