@@ -389,6 +389,15 @@ body {
   filter: brightness(1) contrast(1.1);
 }
 
+/* Prominent elevation badge shown beside each ride */
+.ride-elevation {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-left: auto;
+  align-self: center;
+  white-space: nowrap;
+}
+
 .ride-metrics {
   display: flex;
   flex-wrap: wrap;
