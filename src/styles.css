@@ -398,6 +398,16 @@ body {
   opacity: 0.9;
 }
 
+.metric-high {
+  color: #ffdc50;
+  font-weight: 600;
+}
+
+.metric-low {
+  color: #90cdf4;
+  font-weight: 600;
+}
+
 .ride-map-container {
   position: relative;
   border-radius: 10px;

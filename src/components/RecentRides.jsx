@@ -6,6 +6,18 @@ import MapThumbnail from './MapThumbnail';
 const metersToKm = (m) => m / 1000;
 const metersToFeet = (m) => m * 3.28084;
 
+// Ride summaries include a `trend` object describing how each metric
+// compares to the rider's recent history. Values are strings such as
+// 'very_high', 'high', 'normal', 'low' and 'very_low' calculated using
+// the past 90 days of data. Older boolean `highlight` fields are still
+// handled for backward compatibility.
+
+const statusClass = (val) => {
+  if (val === true || val === 'high' || val === 'very_high') return 'metric-high';
+  if (val === 'low' || val === 'very_low') return 'metric-low';
+  return '';
+};
+
 // Polyline decoding (returns array of [lat, lng])
 const decodePolyline = (str) => {
   let index = 0,
@@ -171,6 +183,7 @@ const RecentRides = ({ count = 10 }) => {
         const tss = rideData.training_stress_score ?? rideData.tss;
         const ifVal = rideData.intensity_factor ?? rideData.intensity;
         const weightedPower = rideData.normalized_power ?? rideData.weighted_average_power ?? rideData.weighted_average_watts;
+        const trend = rideData.trend ?? rideData.highlight ?? rideData.high ?? {};
         const desc = rideData.description ?? rideData.summary ?? '';
         const dateStr = (() => {
           const dateRaw = rideData.date ?? rideData.start_date ?? rideData.startTime ?? rideData.timestamp;
@@ -201,11 +214,31 @@ const RecentRides = ({ count = 10 }) => {
               </div>
               <div className="ride-metrics">
                 {movingTimeStr && <span>Time {movingTimeStr}</span>}
-                {avgSpeedKph && <span>AvgSpd {avgSpeedKph.toFixed(1)} km/h</span>}
-                {maxSpeedKph && <span>Max {maxSpeedKph.toFixed(1)} km/h</span>}
-                {tss && <span>TSS {tss.toFixed?.(0) ?? tss}</span>}
-                {ifVal && <span>Int {ifVal.toFixed?.(2) ?? ifVal}</span>}
-                {weightedPower && <span>Pow {weightedPower} W</span>}
+                {avgSpeedKph && (
+                  <span className={statusClass(trend.avg_speed)}>
+                    AvgSpd {avgSpeedKph.toFixed(1)} km/h
+                  </span>
+                )}
+                {maxSpeedKph && (
+                  <span className={statusClass(trend.max_speed)}>
+                    Max {maxSpeedKph.toFixed(1)} km/h
+                  </span>
+                )}
+                {tss && (
+                  <span className={statusClass(trend.tss)}>
+                    TSS {tss.toFixed?.(0) ?? tss}
+                  </span>
+                )}
+                {ifVal && (
+                  <span className={statusClass(trend.intensity)}>
+                    Int {ifVal.toFixed?.(2) ?? ifVal}
+                  </span>
+                )}
+                {weightedPower && (
+                  <span className={statusClass(trend.power)}>
+                    Pow {weightedPower} W
+                  </span>
+                )}
               </div>
               {desc && <p className="ride-desc">{desc}</p>}
               {dateStr && <div className="ride-date">{dateStr}</div>}
