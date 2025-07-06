@@ -88,7 +88,7 @@ const coordsCenter = (coords)=>{
 const RecentRides = ({ count = 10 }) => {
   const [rides, setRides] = useState(null);
   const [error, setError] = useState(null);
-  const [extraSummaries, setExtraSummaries] = useState({}); // {id: polyline}
+  const [summaries, setSummaries] = useState({}); // {id: summaryObj}
 
   useEffect(() => {
     let mounted = true;
@@ -107,32 +107,31 @@ const RecentRides = ({ count = 10 }) => {
     };
   }, [count]);
 
-  // Fetch summary polyline for rides lacking it
+  // Fetch full summaries for each ride
   useEffect(() => {
     if (!rides || !rides.length) return;
-    const toFetch = rides.filter((r) => {
-      const id = r.id ?? r.activity_id ?? r._id;
-      const existingPoly = r.map?.summary_polyline || r.summary_polyline || r.summaryPolyline || extraSummaries[id];
-      return !existingPoly && id;
-    });
-    if (!toFetch.length) return;
+    const idsToFetch = rides
+      .map((r) => r.id ?? r.activity_id ?? r._id)
+      .filter((id) => id && !summaries[id]);
+
+    if (!idsToFetch.length) return;
+
     Promise.all(
-      toFetch.map((r) => {
-        const id = r.id ?? r.activity_id ?? r._id;
-        return fetchJson(`/activity/${id}/summary`)
-          .then((s) => ({ id, poly: s?.map?.summary_polyline || s?.summary_polyline || s?.summaryPolyline || '' }))
-          .catch(() => ({ id, poly: '' }));
-      })
+      idsToFetch.map((id) =>
+        fetchJson(`/activity/${id}/summary`)
+          .then((s) => ({ id, summary: s }))
+          .catch(() => ({ id, summary: null }))
+      )
     ).then((results) => {
       const map = {};
-      results.forEach((res) => {
-        if (res.poly) map[res.id] = res.poly;
+      results.forEach(({ id, summary }) => {
+        if (summary) map[id] = summary;
       });
       if (Object.keys(map).length) {
-        setExtraSummaries((prev) => ({ ...prev, ...map }));
+        setSummaries((prev) => ({ ...prev, ...map }));
       }
     });
-  }, [rides]);
+  }, [rides, summaries]);
 
   if (error) {
     return (
@@ -158,21 +157,23 @@ const RecentRides = ({ count = 10 }) => {
     <div className="rides-list">
       {rides.map((ride) => {
         const id = ride.id ?? ride.activity_id ?? ride.start_date;
-        const name = ride.name ?? 'Ride';
-        const distanceKm = metersToKm(ride.distance ?? ride.total_distance ?? 0);
-        const elevFt = metersToFeet(ride.total_elevation_gain ?? ride.elevation_gain ?? 0);
-        const moveSec = ride.moving_time ?? ride.movingTime ?? ride.elapsed_time ?? 0;
+        const rideData = { ...ride, ...(summaries[id] || {}) };
+
+        const name = rideData.name ?? 'Ride';
+        const distanceKm = metersToKm(rideData.distance ?? rideData.total_distance ?? 0);
+        const elevFt = metersToFeet(rideData.total_elevation_gain ?? rideData.elevation_gain ?? 0);
+        const moveSec = rideData.duration ?? rideData.moving_time ?? rideData.movingTime ?? rideData.elapsed_time ?? 0;
         const movingTimeStr = moveSec
           ? new Date(moveSec * 1000).toISOString().substring(11, 19)
           : null;
-        const avgSpeedKph = (ride.average_speed ? ride.average_speed * 3.6 : null) || (moveSec ? distanceKm / (moveSec / 3600) : null);
-        const maxSpeedKph = ride.max_speed ? (ride.max_speed * 3.6) : null;
-        const tss = ride.tss ?? ride.training_stress_score;
-        const ifVal = ride.intensity_factor ?? ride.intensity;
-        const weightedPower = ride.weighted_average_power ?? ride.weighted_average_watts ?? ride.weightedPower ?? ride.weighted_power ?? ride.weightedAveragePower ?? ride.weightedAverageWatts ?? ride.weighted_power_avg;
-        const desc = ride.description ?? ride.summary ?? '';
+        const avgSpeedKph = rideData.average_speed ? rideData.average_speed * 3.6 : (moveSec ? distanceKm / (moveSec / 3600) : null);
+        const maxSpeedKph = rideData.max_speed ? (rideData.max_speed * 3.6) : null;
+        const tss = rideData.training_stress_score ?? rideData.tss;
+        const ifVal = rideData.intensity_factor ?? rideData.intensity;
+        const weightedPower = rideData.normalized_power ?? rideData.weighted_average_power ?? rideData.weighted_average_watts;
+        const desc = rideData.description ?? rideData.summary ?? '';
         const dateStr = (() => {
-          const dateRaw = ride.date ?? ride.start_date ?? ride.startTime ?? ride.timestamp;
+          const dateRaw = rideData.date ?? rideData.start_date ?? rideData.startTime ?? rideData.timestamp;
           if (!dateRaw) return '';
           const d = new Date(dateRaw);
           return d.toLocaleDateString(undefined, {
@@ -183,13 +184,11 @@ const RecentRides = ({ count = 10 }) => {
         })();
 
         // Map path
-        let pathD = '';
         let coords = null;
         try {
-          const poly = ride.map?.summary_polyline ?? ride.summary_polyline ?? ride.summaryPolyline ?? ride.polyline ?? extraSummaries[id];
+          const poly = rideData.map?.summary_polyline ?? rideData.summary_polyline ?? rideData.summaryPolyline ?? rideData.polyline;
           if (poly) {
             coords = decodePolyline(poly);
-            pathD = buildMapPath(coords);
           }
         } catch (e) { /* ignore */ }
 
