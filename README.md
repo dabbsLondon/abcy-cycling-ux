@@ -56,3 +56,52 @@ The app will be accessible at [http://localhost:3000](http://localhost:3000).
 A workflow located at `.github/workflows/ci.yml` installs dependencies, builds the project and runs tests on every push and pull request.
 Because Yarn is managed via Corepack, the workflow enables Corepack before installing Node so the correct Yarn version is used when caching dependencies.
 
+## API Endpoints
+
+The frontend expects a few JSON endpoints under `/api`. Below are example responses so client developers know what to expect.
+
+### `GET /api/wkg/history?count=20`
+Returns recent W/kg values with the newest entry first.
+
+```json
+[
+  { "wkg": 3.6 },
+  { "wkg": 3.5 },
+  { "wkg": 3.4 }
+]
+```
+
+### `GET /api/enduro`
+Returns the current enduro score.
+
+```json
+{ "enduro": 56 }
+```
+
+### `GET /api/fitness`
+Returns the current fitness score.
+
+```json
+{ "fitness": 42 }
+```
+
+### `GET /api/stats?period=week&count=8`
+Provides aggregate statistics for the requested period. Fields may include total distance in meters, training stress score and intensity factor.
+
+```json
+[
+  {
+    "period": "2024-W12",
+    "totalDistance": 42000,
+    "totalTrainingStress": 300,
+    "averageIntensityFactor": 0.85
+  },
+  {
+    "period": "2024-W11",
+    "totalDistance": 39000,
+    "totalTrainingStress": 280,
+    "averageIntensityFactor": 0.82
+  }
+]
+```
+
