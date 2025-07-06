@@ -106,7 +106,7 @@ Provides aggregate statistics for the requested period. Fields may include total
 ```
 
 ### `GET /api/activity/{id}/summary`
-Returns a summary of a single ride. A `trend` object compares each metric to the rider's past 90 days. Each value is one of `very_low`, `low`, `normal`, `high` or `very_high` based on standard deviation bands:
+Returns a summary of a single ride. A `trend` object compares each metric to the rider's past 90 days. Elevation gain is provided in **meters**. Each value is one of `very_low`, `low`, `normal`, `high` or `very_high` based on standard deviation bands:
 
 * `very_high` >= mean + 1.5*stdev
 * `high` >= mean + 0.5*stdev
@@ -117,7 +117,7 @@ Returns a summary of a single ride. A `trend` object compares each metric to the
 ```json
 {
   "distance": 40500,
-  "elevation_gain": 520,
+  "total_elevation_gain": 520,
   "moving_time": 4300,
   "average_speed": 8.5,
   "max_speed": 16.2,
