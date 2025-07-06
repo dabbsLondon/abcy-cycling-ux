@@ -180,15 +180,8 @@ const RecentRides = ({ count = 10 }) => {
         const movingTimeStr = moveSec
           ? new Date(moveSec * 1000).toISOString().substring(11, 19)
           : null;
-        let avgSpeedKph = null;
-        if (rideData.average_speed) {
-          const val = rideData.average_speed;
-          // Detect if value is already in km/h or mph (typical values >15)
-          // Values below this are assumed to be in m/s and converted
-          avgSpeedKph = val < 15 ? val * 3.6 : val;
-        } else if (moveSec) {
-          avgSpeedKph = distanceKm / (moveSec / 3600);
-        }
+        const avgSpeedKph = rideData.average_speed ??
+          (moveSec ? distanceKm / (moveSec / 3600) : null);
         const maxSpeedKph = rideData.max_speed ? (rideData.max_speed * 3.6) : null;
         const tss = rideData.training_stress_score ?? rideData.tss;
         const ifVal = rideData.intensity_factor ?? rideData.intensity;
