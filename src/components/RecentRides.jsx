@@ -12,10 +12,12 @@ const metersToFeet = (m) => m * 3.28084;
 // the past 90 days of data. Older boolean `highlight` fields are still
 // handled for backward compatibility.
 
-const statusClass = (val) => {
-  if (val === true || val === 'high' || val === 'very_high') return 'metric-high';
-  if (val === 'low' || val === 'very_low') return 'metric-low';
-  return '';
+const trendInfo = (val) => {
+  if (val === true || val === 'high' || val === 'very_high')
+    return { cls: 'bubble-up', icon: '▲' };
+  if (val === 'low' || val === 'very_low')
+    return { cls: 'bubble-down', icon: '▼' };
+  return { cls: 'bubble-neutral', icon: null };
 };
 
 // Polyline decoding (returns array of [lat, lng])
@@ -213,32 +215,49 @@ const RecentRides = ({ count = 10 }) => {
                 {distanceKm.toFixed(1)} km · {elevFt.toFixed(0)} ft {avgSpeedKph ? `· ${avgSpeedKph.toFixed(1)} km/h` : ''}
               </div>
               <div className="ride-metrics">
-                {movingTimeStr && <span>Time {movingTimeStr}</span>}
-                {avgSpeedKph && (
-                  <span className={statusClass(trend.avg_speed)}>
-                    AvgSpd {avgSpeedKph.toFixed(1)} km/h
-                  </span>
+                {movingTimeStr && (
+                  <span className="metric-bubble bubble-neutral">Time {movingTimeStr}</span>
                 )}
-                {maxSpeedKph && (
-                  <span className={statusClass(trend.max_speed)}>
-                    Max {maxSpeedKph.toFixed(1)} km/h
-                  </span>
-                )}
-                {tss && (
-                  <span className={statusClass(trend.tss)}>
-                    TSS {tss.toFixed?.(0) ?? tss}
-                  </span>
-                )}
-                {ifVal && (
-                  <span className={statusClass(trend.intensity)}>
-                    Int {ifVal.toFixed?.(2) ?? ifVal}
-                  </span>
-                )}
-                {weightedPower && (
-                  <span className={statusClass(trend.power)}>
-                    Pow {weightedPower} W
-                  </span>
-                )}
+                {avgSpeedKph && (() => {
+                  const t = trendInfo(trend.avg_speed);
+                  return (
+                    <span className={`metric-bubble ${t.cls}`}>
+                      {t.icon && <span className="trend-icon">{t.icon}</span>}AvgSpd {avgSpeedKph.toFixed(1)} km/h
+                    </span>
+                  );
+                })()}
+                {maxSpeedKph && (() => {
+                  const t = trendInfo(trend.max_speed);
+                  return (
+                    <span className={`metric-bubble ${t.cls}`}>
+                      {t.icon && <span className="trend-icon">{t.icon}</span>}Max {maxSpeedKph.toFixed(1)} km/h
+                    </span>
+                  );
+                })()}
+                {tss && (() => {
+                  const t = trendInfo(trend.tss);
+                  return (
+                    <span className={`metric-bubble ${t.cls}`}>
+                      {t.icon && <span className="trend-icon">{t.icon}</span>}TSS {tss.toFixed?.(0) ?? tss}
+                    </span>
+                  );
+                })()}
+                {ifVal && (() => {
+                  const t = trendInfo(trend.intensity);
+                  return (
+                    <span className={`metric-bubble ${t.cls}`}>
+                      {t.icon && <span className="trend-icon">{t.icon}</span>}Int {ifVal.toFixed?.(2) ?? ifVal}
+                    </span>
+                  );
+                })()}
+                {weightedPower && (() => {
+                  const t = trendInfo(trend.power);
+                  return (
+                    <span className={`metric-bubble ${t.cls}`}>
+                      {t.icon && <span className="trend-icon">{t.icon}</span>}Pow {weightedPower} W
+                    </span>
+                  );
+                })()}
               </div>
               {desc && <p className="ride-desc">{desc}</p>}
               {dateStr && <div className="ride-date">{dateStr}</div>}

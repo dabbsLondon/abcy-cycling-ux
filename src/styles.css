@@ -392,10 +392,9 @@ body {
 .ride-metrics {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
+  gap: 0.5rem 0.5rem;
   font-size: 0.75rem;
-  color: var(--text-body);
-  opacity: 0.9;
+  color: #fff;
 }
 
 .metric-high {
@@ -406,6 +405,36 @@ body {
 .metric-low {
   color: #90cdf4;
   font-weight: 600;
+}
+
+/* Metric bubbles for ride metrics */
+.metric-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bubble-up {
+  background: linear-gradient(135deg, #0f9d58, #1bb76e);
+}
+
+.bubble-down {
+  background: linear-gradient(135deg, #d32f2f, #b71c1c);
+}
+
+.bubble-neutral {
+  background: var(--gradient-blue);
+}
+
+.trend-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+  margin-right: 0.25rem;
 }
 
 .ride-map-container {
